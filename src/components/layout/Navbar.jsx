@@ -2,6 +2,7 @@ import React from 'react'
 import Button from '../common/Button.jsx'
 import NotificationBell from './NotificationBell.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
+import logo from '../../assets/logo.png'
 
 export default function Navbar({ view, onChangeView, onRequestLogin }) {
   const { isAdmin, admin, logout } = useAuth()
@@ -13,9 +14,13 @@ export default function Navbar({ view, onChangeView, onRequestLogin }) {
           onClick={() => onChangeView('dashboard')}
           className="flex items-center gap-2 text-left"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gold font-display text-base font-bold text-forest-950">
-            C4A
-          </span>
+          <div className="h-10 w-10 overflow-hidden rounded-xl">
+  <img
+    src={logo}
+    alt="C4A Dashboard"
+    className="h-full w-full object-cover"
+  />
+</div>
           <span className="hidden flex-col leading-tight sm:flex">
             <span className="font-display text-base font-semibold">Events &amp; Seminars</span>
             <span className="text-xs text-cream-100/60">De La Salle Lipa</span>
