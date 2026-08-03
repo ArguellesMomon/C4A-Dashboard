@@ -23,13 +23,12 @@ export default function EventList({ events, onSelectEvent, selectedDate, hidePas
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search events..."
-          className="flex-1 rounded-lg border border-cream-300 bg-cream-100 px-3 py-2 text-sm
-            text-forest-900 placeholder:text-forest-700/40 focus:border-forest-500"
+          className="input flex-1"
         />
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="rounded-lg border border-cream-300 bg-cream-100 px-3 py-2 text-sm text-forest-900 focus:border-forest-500"
+          className="input"
         >
           <option value="All">All categories</option>
           {CATEGORIES.map((c) => (

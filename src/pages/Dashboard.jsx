@@ -1,17 +1,35 @@
 import React, { useState } from 'react'
 import CalendarView from '../components/calendar/CalendarView.jsx'
+import DayEventsModal from '../components/calendar/DayEventsModal.jsx'
 import EventList from '../components/events/EventList.jsx'
 import EventDetailsModal from '../components/events/EventDetailsModal.jsx'
 import { useEvents } from '../context/EventsContext.jsx'
+import { useEventReminders } from '../hooks/useEventReminders.js'
 import { daysUntil } from '../lib/dateUtils.js'
 
 export default function Dashboard() {
   const { events, loading, error } = useEvents()
+  useEventReminders(events)
   const [selectedDate, setSelectedDate] = useState(null)
+  const [showDayModal, setShowDayModal] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState(null)
   const [mobileTab, setMobileTab] = useState('calendar') // 'calendar' | 'list'
 
   const nextEvent = events.filter((e) => daysUntil(e.date) >= 0)[0]
+
+  // Clicking a day on the calendar both filters the agenda list below
+  // and pops open a modal listing that day's events - clearing the date
+  // (via CalendarView's "Clear date filter" link) just closes the filter,
+  // it doesn't need to touch the modal since it's already closed by then.
+  function handleSelectDate(iso) {
+    setSelectedDate(iso)
+    if (iso) setShowDayModal(true)
+  }
+
+  function handleSelectEventFromDayModal(event) {
+    setShowDayModal(false)
+    setSelectedEvent(event)
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
@@ -44,7 +62,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[22rem,1fr]">
         <div className={mobileTab === 'calendar' ? 'block' : 'hidden sm:block'}>
-          <CalendarView events={events} selectedDate={selectedDate} onSelectDate={setSelectedDate} />
+          <CalendarView events={events} selectedDate={selectedDate} onSelectDate={handleSelectDate} />
         </div>
 
         <div className={mobileTab === 'list' ? 'block' : 'hidden sm:block'}>
@@ -60,6 +78,15 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+      {showDayModal && selectedDate && (
+        <DayEventsModal
+          date={selectedDate}
+          events={events.filter((e) => e.date === selectedDate)}
+          onSelectEvent={handleSelectEventFromDayModal}
+          onClose={() => setShowDayModal(false)}
+        />
+      )}
 
       {selectedEvent && (
         <EventDetailsModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />

@@ -1,5 +1,6 @@
 import React from 'react'
 import Button from '../common/Button.jsx'
+import NotificationBell from './NotificationBell.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 
 export default function Navbar({ view, onChangeView, onRequestLogin }) {
@@ -22,6 +23,7 @@ export default function Navbar({ view, onChangeView, onRequestLogin }) {
         </button>
 
         <div className="flex items-center gap-2">
+          <NotificationBell />
           {isAdmin ? (
             <>
               <button

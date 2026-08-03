@@ -61,7 +61,7 @@ export default function CalendarView({ events, selectedDate, onSelectDate }) {
             cell={cell}
             eventsOnDay={eventsByDate[cell.iso] || []}
             isSelected={selectedDate === cell.iso}
-            onSelect={(iso) => onSelectDate(selectedDate === iso ? null : iso)}
+            onSelect={onSelectDate}
           />
         ))}
       </div>
