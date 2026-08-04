@@ -8,7 +8,8 @@ import EventCardSkeleton from '../components/common/EventCardSkeleton.jsx'
 import HeroPattern from '../components/common/HeroPattern.jsx'
 import { useEvents } from '../context/EventsContext.jsx'
 import { useEventReminders } from '../hooks/useEventReminders.js'
-import { daysUntil } from '../lib/dateUtils.js'
+import { useMediaQuery } from '../hooks/useMediaQuery.js'
+import { daysUntil, formatFriendlyDate } from '../lib/dateUtils.js'
 
 const TODAY = new Date()
 const TODAY_DAY = TODAY.getDate()
@@ -24,13 +25,20 @@ export default function Dashboard() {
 
   const nextEvent = events.filter((e) => daysUntil(e.date) >= 0)[0]
 
-  // Clicking a day on the calendar both filters the agenda list below
-  // and pops open a modal listing that day's events - clearing the date
-  // (via CalendarView's "Clear date filter" link) just closes the filter,
-  // it doesn't need to touch the modal since it's already closed by then.
+  // The layout goes side-by-side at the lg breakpoint (1024px) - see the
+  // grid below. Below that, the calendar and agenda are stacked (or on
+  // separate tabs on phones), so a popup genuinely helps. At lg+, the
+  // filtered list is already sitting right next to the calendar, so the
+  // popup would just be showing the same thing twice.
+  const isDesktopLayout = useMediaQuery('(min-width: 1024px)')
+
+  // Clicking a day on the calendar always filters the agenda list (via
+  // the persistent filter bar below), and additionally pops open a modal
+  // on phones/tablets where that filtered list isn't already visible
+  // alongside the calendar.
   function handleSelectDate(iso) {
     setSelectedDate(iso)
-    if (iso) setShowDayModal(true)
+    if (iso && !isDesktopLayout) setShowDayModal(true)
   }
 
   function handleSelectEventFromDayModal(event) {
@@ -70,18 +78,44 @@ export default function Dashboard() {
       </div>
 
       {/* Mobile tab switcher */}
-      <div className="mb-4 flex gap-2 sm:hidden">
+      <div className="mb-3 flex gap-2 sm:hidden">
         {['calendar', 'list'].map((tab) => (
           <button
             key={tab}
             onClick={() => setMobileTab(tab)}
-            className={`flex-1 rounded-lg py-2 text-sm font-semibold capitalize transition-colors
+            className={`relative flex-1 rounded-lg py-2 text-sm font-semibold capitalize transition-colors
               ${mobileTab === tab ? 'bg-forest-700 text-cream-100' : 'bg-cream-100 text-forest-800 border border-cream-300'}`}
           >
             {tab === 'calendar' ? 'Calendar' : 'Upcoming'}
+            {tab === 'list' && selectedDate && (
+              <span className="absolute right-2 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-gold" />
+            )}
           </button>
         ))}
       </div>
+
+      {/* Persistent filter indicator. On phones it only makes sense on the
+          Upcoming tab - the Calendar tab already shows the selection via
+          the highlighted date (and the popup), so showing this bar there
+          too is redundant. It stays visible on the Upcoming tab, and
+          always visible at sm+ where there are no tabs at all (calendar
+          and list are shown together, so the filter applies to both). */}
+      {selectedDate && (
+        <div
+          className={`mb-4 flex-wrap items-center justify-between gap-2 rounded-lg border border-forest-300/40
+            bg-sage-100 px-4 py-2.5 text-sm ${mobileTab === 'calendar' ? 'hidden sm:flex' : 'flex'}`}
+        >
+          <span className="text-forest-800">
+            Showing events for <span className="font-semibold">{formatFriendlyDate(selectedDate)}</span>
+          </span>
+          <button
+            onClick={() => setSelectedDate(null)}
+            className="font-semibold text-forest-700 underline underline-offset-2 hover:text-forest-900"
+          >
+            Show all upcoming
+          </button>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[22rem,1fr]">
         <div className={mobileTab === 'calendar' ? 'block' : 'hidden sm:block'}>

@@ -65,15 +65,6 @@ export default function CalendarView({ events, selectedDate, onSelectDate }) {
           />
         ))}
       </div>
-
-      {selectedDate && (
-        <button
-          onClick={() => onSelectDate(null)}
-          className="mt-3 text-xs font-semibold text-forest-700 underline underline-offset-2"
-        >
-          Clear date filter
-        </button>
-      )}
     </div>
   )
 }
