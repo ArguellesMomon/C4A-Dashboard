@@ -8,7 +8,7 @@ import EventCardSkeleton from '../components/common/EventCardSkeleton.jsx'
 import HeroPattern from '../components/common/HeroPattern.jsx'
 import { useEvents } from '../context/EventsContext.jsx'
 import { useEventReminders } from '../hooks/useEventReminders.js'
-import { useMediaQuery } from '../hooks/usemediaquery.js'
+import { useMediaQuery } from '../hooks/Usemediaquery.js'
 import { daysUntil, formatFriendlyDate } from '../lib/dateUtils.js'
 
 const TODAY = new Date()
