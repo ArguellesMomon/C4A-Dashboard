@@ -3,9 +3,16 @@ import CalendarView from '../components/calendar/CalendarView.jsx'
 import DayEventsModal from '../components/calendar/DayEventsModal.jsx'
 import EventList from '../components/events/EventList.jsx'
 import EventDetailsModal from '../components/events/EventDetailsModal.jsx'
+import FeaturedEventCard from '../components/events/FeaturedEventCard.jsx'
+import EventCardSkeleton from '../components/common/EventCardSkeleton.jsx'
+import HeroPattern from '../components/common/HeroPattern.jsx'
 import { useEvents } from '../context/EventsContext.jsx'
 import { useEventReminders } from '../hooks/useEventReminders.js'
 import { daysUntil } from '../lib/dateUtils.js'
+
+const TODAY = new Date()
+const TODAY_DAY = TODAY.getDate()
+const TODAY_MONTH = TODAY.toLocaleDateString('en-US', { month: 'short' })
 
 export default function Dashboard() {
   const { events, loading, error } = useEvents()
@@ -34,16 +41,32 @@ export default function Dashboard() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
       {/* Hero */}
-      <div className="mb-6 rounded-2xl bg-forest-800 px-6 py-8 text-cream-100 sm:px-10 sm:py-10">
-        <p className="text-xs font-semibold uppercase tracking-widest text-gold-light">C4A Student Dashboard</p>
-        <h1 className="mt-2 font-display text-2xl font-semibold sm:text-3xl">
-          Every seminar, workshop, and deadline in one place.
-        </h1>
-        {nextEvent && (
-          <p className="mt-3 text-sm text-cream-100/80">
-            Coming up next: <span className="font-semibold text-cream-100">{nextEvent.title}</span>
-          </p>
-        )}
+      <div className="relative mb-6 overflow-hidden rounded-2xl bg-forest-800 px-6 py-8 text-cream-100 sm:px-10 sm:py-10">
+        <HeroPattern className="pointer-events-none absolute inset-0 h-full w-full text-cream-100 opacity-[0.08]" />
+        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-gold-light">
+              C4A Student Dashboard
+            </p>
+            <h1 className="mt-2 font-display text-2xl font-semibold sm:text-3xl">
+              Every seminar, workshop, and deadline in one place.
+            </h1>
+            {nextEvent && (
+              <p className="mt-3 text-sm text-cream-100/80">
+                Coming up next: <span className="font-semibold text-cream-100">{nextEvent.title}</span>
+              </p>
+            )}
+          </div>
+
+          {/* Poster-style date stamp - a small deliberate flourish instead
+              of a flat banner with nothing but text in it. */}
+          <div className="hidden shrink-0 flex-col items-center rounded-2xl bg-cream-100/10 px-6 py-4 text-center backdrop-blur-sm sm:flex">
+            <span className="font-display text-4xl font-bold leading-none text-gold-light">{TODAY_DAY}</span>
+            <span className="mt-1 text-xs font-semibold uppercase tracking-widest text-cream-100/70">
+              {TODAY_MONTH}
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Mobile tab switcher */}
@@ -69,12 +92,27 @@ export default function Dashboard() {
           <h2 className="mb-3 font-display text-lg font-semibold text-forest-900">
             {selectedDate ? 'Events on selected date' : 'Upcoming events'}
           </h2>
+
           {loading ? (
-            <p className="text-sm text-forest-700/60">Loading events...</p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {[...Array(4)].map((_, i) => (
+                <EventCardSkeleton key={i} />
+              ))}
+            </div>
           ) : error ? (
             <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
           ) : (
-            <EventList events={events} onSelectEvent={setSelectedEvent} selectedDate={selectedDate} />
+            <>
+              {!selectedDate && nextEvent && (
+                <FeaturedEventCard event={nextEvent} onClick={() => setSelectedEvent(nextEvent)} />
+              )}
+              <EventList
+                events={events}
+                onSelectEvent={setSelectedEvent}
+                selectedDate={selectedDate}
+                excludeIds={!selectedDate && nextEvent ? [nextEvent.id] : []}
+              />
+            </>
           )}
         </div>
       </div>

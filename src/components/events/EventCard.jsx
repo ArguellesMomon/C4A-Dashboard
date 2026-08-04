@@ -1,5 +1,6 @@
 import React from 'react'
 import CategoryBadge from './CategoryBadge.jsx'
+import { CalendarIcon, ClockIcon, PinIcon } from '../common/icons.jsx'
 import { formatFriendlyDate, formatTime, daysUntil } from '../../lib/dateUtils.js'
 
 function countdownLabel(days) {
@@ -34,9 +35,22 @@ export default function EventCard({ event, onClick }) {
           {event.title}
         </h3>
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-forest-700/80">
-          <span>📅 {formatFriendlyDate(event.date)}</span>
-          {event.time && <span>🕐 {formatTime(event.time)}</span>}
-          {event.location && <span>📍 {event.location}</span>}
+          <span className="flex items-center gap-1.5">
+            <CalendarIcon className="h-4 w-4 shrink-0" />
+            {formatFriendlyDate(event.date)}
+          </span>
+          {event.time && (
+            <span className="flex items-center gap-1.5">
+              <ClockIcon className="h-4 w-4 shrink-0" />
+              {formatTime(event.time)}
+            </span>
+          )}
+          {event.location && (
+            <span className="flex items-center gap-1.5">
+              <PinIcon className="h-4 w-4 shrink-0" />
+              {event.location}
+            </span>
+          )}
         </div>
       </div>
     </button>

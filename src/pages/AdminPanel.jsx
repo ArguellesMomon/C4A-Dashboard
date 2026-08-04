@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import Button from '../components/common/Button.jsx'
 import EmptyState from '../components/common/EmptyState.jsx'
+import ConfirmModal from '../components/common/ConfirmModal.jsx'
+import EventCardSkeleton from '../components/common/EventCardSkeleton.jsx'
 import EventFormModal from '../components/events/EventFormModal.jsx'
 import CategoryBadge from '../components/events/CategoryBadge.jsx'
 import { useEvents } from '../context/EventsContext.jsx'
@@ -12,6 +14,7 @@ export default function AdminPanel() {
   const { events, loading, createEvent, editEvent, removeEvent } = useEvents()
   const [formEvent, setFormEvent] = useState(null) // null = closed, {} = new, {...} = editing
   const [showForm, setShowForm] = useState(false)
+  const [pendingDeleteId, setPendingDeleteId] = useState(null)
 
   function openNewEventForm() {
     setFormEvent(null)
@@ -37,8 +40,16 @@ export default function AdminPanel() {
     }
   }
 
-  async function handleDelete(id) {
-    if (!confirm('Delete this event? This cannot be undone.')) return
+  // Both the table's "Delete" button and the edit form's "Delete event"
+  // button call this - it just opens the themed confirm dialog rather
+  // than deleting right away.
+  function requestDelete(id) {
+    setPendingDeleteId(id)
+  }
+
+  async function confirmDelete() {
+    const id = pendingDeleteId
+    setPendingDeleteId(null)
     try {
       await removeEvent(id)
       setShowForm(false)
@@ -61,7 +72,11 @@ export default function AdminPanel() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-forest-700/60">Loading events...</p>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {[...Array(4)].map((_, i) => (
+            <EventCardSkeleton key={i} />
+          ))}
+        </div>
       ) : events.length === 0 ? (
         <EmptyState title="No events yet" message="Click 'Add event' to schedule the first one." />
       ) : (
@@ -99,7 +114,7 @@ export default function AdminPanel() {
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(event.id)}
+                      onClick={() => requestDelete(event.id)}
                       className="rounded-lg px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-50"
                     >
                       Delete
@@ -116,8 +131,19 @@ export default function AdminPanel() {
         <EventFormModal
           initialEvent={formEvent}
           onSave={handleSave}
-          onDelete={handleDelete}
+          onDelete={requestDelete}
           onClose={() => setShowForm(false)}
+        />
+      )}
+
+      {pendingDeleteId && (
+        <ConfirmModal
+          title="Delete event?"
+          message="This removes it for every student viewing the dashboard. This cannot be undone."
+          confirmLabel="Delete"
+          danger
+          onConfirm={confirmDelete}
+          onCancel={() => setPendingDeleteId(null)}
         />
       )}
     </div>

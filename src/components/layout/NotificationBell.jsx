@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { BellIcon, BellOffIcon } from '../common/icons.jsx'
 import {
   isNotificationSupported,
   requestNotificationPermission,
@@ -15,9 +16,6 @@ export default function NotificationBell() {
 
   if (!isNotificationSupported()) return null
 
-  // Browser-level permission was never granted yet - ask for it. Turning
-  // reminders "on" here is what starts them; there's nothing to toggle
-  // until permission exists.
   if (permission !== 'granted') {
     async function handleRequest() {
       const result = await requestNotificationPermission()
@@ -28,27 +26,31 @@ export default function NotificationBell() {
       <button
         onClick={handleRequest}
         disabled={permission === 'denied'}
-        className="rounded-lg px-3 py-2 text-sm font-semibold hover:bg-forest-700 disabled:opacity-50"
+        className="flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-semibold
+          hover:bg-forest-700 disabled:opacity-50 sm:gap-2 sm:px-3"
         title={
           permission === 'denied'
             ? 'Notifications are blocked in your browser settings for this site.'
             : 'Get a browser reminder when an event is coming up'
         }
       >
-        {permission === 'denied' ? '🔕 Notifications blocked' : '🔔 Get reminders'}
+        {permission === 'denied' ? <BellOffIcon /> : <BellIcon />}
+        <span className="hidden sm:inline">
+          {permission === 'denied' ? 'Notifications blocked' : 'Get reminders'}
+        </span>
       </button>
     )
   }
 
-  // Permission is granted - this is our own on/off switch, layered on top,
-  // since a website can never revoke browser permission once granted.
   return (
     <button
       onClick={toggleEnabled}
-      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold hover:bg-forest-700"
+      className="flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-semibold
+        hover:bg-forest-700 sm:gap-2 sm:px-3"
       title={enabled ? 'Turn off event reminders' : 'Turn on event reminders'}
     >
-      {enabled ? '🔔 Reminders on' : '🔕 Reminders off'}
+      {enabled ? <BellIcon /> : <BellOffIcon />}
+      <span className="hidden sm:inline">{enabled ? 'Reminders on' : 'Reminders off'}</span>
     </button>
   )
 }

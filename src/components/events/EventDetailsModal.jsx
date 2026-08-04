@@ -1,7 +1,22 @@
 import React from 'react'
 import Modal from '../common/Modal.jsx'
+import Button from '../common/Button.jsx'
 import CategoryBadge from './CategoryBadge.jsx'
+import { CalendarIcon, ClockIcon, PinIcon, UsersIcon } from '../common/icons.jsx'
+import { downloadICS, googleCalendarUrl } from '../../lib/calendarExport.js'
 import { formatFriendlyDate, formatTime } from '../../lib/dateUtils.js'
+
+function DetailRow({ icon: Icon, label, value }) {
+  return (
+    <div className="flex items-start gap-3">
+      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-forest-500" />
+      <div>
+        <dt className="text-xs uppercase tracking-wide text-forest-700/50">{label}</dt>
+        <dd className="text-sm text-forest-900">{value}</dd>
+      </div>
+    </div>
+  )
+}
 
 export default function EventDetailsModal({ event, onClose }) {
   if (!event) return null
@@ -12,30 +27,11 @@ export default function EventDetailsModal({ event, onClose }) {
         <CategoryBadge category={event.category} />
         <h3 className="font-display text-2xl font-semibold text-forest-900">{event.title}</h3>
 
-        <dl className="grid grid-cols-[auto,1fr] gap-x-3 gap-y-2 text-sm">
-          <dt className="text-forest-700/60">Date</dt>
-          <dd className="text-forest-900">{formatFriendlyDate(event.date)}</dd>
-
-          {event.time && (
-            <>
-              <dt className="text-forest-700/60">Time</dt>
-              <dd className="text-forest-900">{formatTime(event.time)}</dd>
-            </>
-          )}
-
-          {event.location && (
-            <>
-              <dt className="text-forest-700/60">Location</dt>
-              <dd className="text-forest-900">{event.location}</dd>
-            </>
-          )}
-
-          {event.organizer && (
-            <>
-              <dt className="text-forest-700/60">Organizer</dt>
-              <dd className="text-forest-900">{event.organizer}</dd>
-            </>
-          )}
+        <dl className="flex flex-col gap-3">
+          <DetailRow icon={CalendarIcon} label="Date" value={formatFriendlyDate(event.date)} />
+          {event.time && <DetailRow icon={ClockIcon} label="Time" value={formatTime(event.time)} />}
+          {event.location && <DetailRow icon={PinIcon} label="Location" value={event.location} />}
+          {event.organizer && <DetailRow icon={UsersIcon} label="Organizer" value={event.organizer} />}
         </dl>
 
         {event.description && (
@@ -43,6 +39,23 @@ export default function EventDetailsModal({ event, onClose }) {
             {event.description}
           </p>
         )}
+
+        <div className="flex flex-col gap-2 border-t border-cream-300 pt-4 sm:flex-row">
+          <Button
+            variant="secondary"
+            className="flex-1 justify-center"
+            onClick={() => window.open(googleCalendarUrl(event), '_blank', 'noopener')}
+          >
+            Add to Google Calendar
+          </Button>
+          <Button
+            variant="ghost"
+            className="flex-1 justify-center"
+            onClick={() => downloadICS(event)}
+          >
+            Download .ics (Apple/Outlook)
+          </Button>
+        </div>
       </div>
     </Modal>
   )

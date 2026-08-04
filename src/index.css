@@ -38,3 +38,14 @@ body {
 .animate-modal-in {
   animation: modal-in 0.18s ease-out;
 }
+
+/* Staggered entrance for event cards - each card gets a small increasing
+   delay (set inline per-card) so the list feels considered rather than
+   popping in all at once. */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.35s ease-out both;
+}

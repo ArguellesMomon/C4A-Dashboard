@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { XIcon } from './icons.jsx'
 
 export default function Modal({ title, onClose, children, maxWidth = 'max-w-md' }) {
   // Let people close the modal with Escape, a small usability win.
@@ -30,7 +31,7 @@ export default function Modal({ title, onClose, children, maxWidth = 'max-w-md' 
             aria-label="Close dialog"
             className="rounded-full p-1 text-forest-700 hover:bg-sage-100"
           >
-            ✕
+            <XIcon className="h-4 w-4" />
           </button>
         </div>
         <div className="px-6 py-5">{children}</div>
