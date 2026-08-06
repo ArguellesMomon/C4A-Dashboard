@@ -41,7 +41,7 @@ export default function EventList({ events, onSelectEvent, selectedDate, hidePas
       {filtered.length === 0 ? (
         <EmptyState
           title="No events found"
-          message={selectedDate ? 'Nothing scheduled on this day yet.' : 'Try a different search or category.'}
+          message={selectedDate ? 'Nothing scheduled on this day.' : 'Try a different search or category.'}
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

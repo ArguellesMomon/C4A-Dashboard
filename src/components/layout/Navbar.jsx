@@ -33,7 +33,7 @@ export default function Navbar({ view, onChangeView, onRequestLogin }) {
               instead of disappearing, so portrait phones still get a title. */}
           <span className="flex min-w-0 flex-col leading-tight">
             <span className="truncate font-display text-sm font-semibold sm:text-base">
-              Events &amp; Seminars
+              C4A HUB
             </span>
             <span className="hidden text-xs text-cream-100/60 sm:block">De La Salle Lipa</span>
           </span>

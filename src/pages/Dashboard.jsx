@@ -144,6 +144,7 @@ export default function Dashboard() {
                 events={events}
                 onSelectEvent={setSelectedEvent}
                 selectedDate={selectedDate}
+                hidePast={!selectedDate}
                 excludeIds={!selectedDate && nextEvent ? [nextEvent.id] : []}
               />
             </>
