@@ -9,13 +9,19 @@ import { supabase } from './supabaseClient.js'
 const TABLE = 'events'
 
 export async function getEvents() {
-  const { data, error } = await supabase
-    .from(TABLE)
-    .select('*')
-    .order('date', { ascending: true })
-
-  if (error) throw error
-  return data
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 15000)
+  try {
+    const { data, error, status } = await supabase
+      .from(TABLE)
+      .select('*')
+      .order('date', { ascending: true })
+      .abortSignal(controller.signal)
+    if (error) throw Object.assign(new Error(error.message), error, { status })
+    return data || []
+  } finally {
+    clearTimeout(timeout)
+  }
 }
 
 export async function addEvent(event) {

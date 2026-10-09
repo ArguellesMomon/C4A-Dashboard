@@ -18,9 +18,10 @@ export function AuthProvider({ children }) {
 
     if (error || !data) {
       setAdmin(null)
-      return
+      return false
     }
     setAdmin(data)
+    return true
   }
 
   // Supabase Auth persists its own session in localStorage, so a page
@@ -45,9 +46,14 @@ export function AuthProvider({ children }) {
 
   async function login(studentNumber, password) {
     const email = studentNumberToEmail(studentNumber)
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
       return { success: false, message: 'Student number or password is incorrect.' }
+    }
+    const authorized = data.user && await loadProfile(data.user.id)
+    if (!authorized) {
+      await supabase.auth.signOut()
+      return { success: false, message: 'This account does not have a C4A officer profile. Contact your section administrator.' }
     }
     return { success: true }
   }

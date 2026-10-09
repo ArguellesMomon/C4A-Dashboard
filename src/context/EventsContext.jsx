@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import * as db from '../lib/database.js'
+import { eventErrorMessage } from '../lib/eventErrors.js'
 
 const EventsContext = createContext(null)
 
@@ -9,12 +10,13 @@ export function EventsProvider({ children }) {
   const [error, setError] = useState('')
 
   const refresh = useCallback(async () => {
+    setLoading(true)
     try {
       const all = await db.getEvents()
       setEvents(all)
       setError('')
     } catch (err) {
-      setError('Could not load events. Check your internet connection.')
+      setError(eventErrorMessage(err))
       console.error(err)
     } finally {
       setLoading(false)
@@ -31,20 +33,21 @@ export function EventsProvider({ children }) {
 
   async function createEvent(event) {
     await db.addEvent(event)
-    // No manual refresh() call needed here - the realtime subscription
-    // above will pick up the insert and update everyone's view, including
-    // the officer who just created it.
+    await refresh()
+    // Refresh explicitly so the officer receives updates even without Realtime.
   }
 
   async function editEvent(id, updates) {
     await db.updateEvent(id, updates)
+    await refresh()
   }
 
   async function removeEvent(id) {
     await db.deleteEvent(id)
+    await refresh()
   }
 
-  const value = { events, loading, error, createEvent, editEvent, removeEvent }
+  const value = { events, loading, error, createEvent, editEvent, removeEvent, refresh }
   return <EventsContext.Provider value={value}>{children}</EventsContext.Provider>
 }
 

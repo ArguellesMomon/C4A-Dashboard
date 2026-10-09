@@ -35,7 +35,7 @@ function getNotifiedIds() {
 }
 
 function saveNotifiedIds(ids) {
-  localStorage.setItem(NOTIFIED_KEY, JSON.stringify([...ids]))
+  try { localStorage.setItem(NOTIFIED_KEY, JSON.stringify([...ids])) } catch {}
 }
 
 export function isNotificationSupported() {
@@ -50,11 +50,11 @@ export function requestNotificationPermission() {
 // The app-level on/off switch. Defaults to "on" the first time someone
 // grants browser permission (see NotificationBell), then persists here.
 export function getRemindersEnabled() {
-  return localStorage.getItem(ENABLED_KEY) !== 'false' // default: enabled
+  try { return localStorage.getItem(ENABLED_KEY) !== 'false' } catch { return true } // // default: enabled
 }
 
 export function setRemindersEnabled(enabled) {
-  localStorage.setItem(ENABLED_KEY, String(enabled))
+  try { localStorage.setItem(ENABLED_KEY, String(enabled)) } catch {}
 }
 
 // Small hook so the bell button re-renders when the preference changes,
@@ -78,10 +78,10 @@ export function useRemindersEnabled() {
 export function useEventReminders(events) {
   useEffect(() => {
     if (!isNotificationSupported()) return
-    if (Notification.permission !== 'granted') return
+
 
     function checkAndNotify() {
-      if (!getRemindersEnabled()) return // turned off from inside the app
+      if (Notification.permission !== 'granted' || !getRemindersEnabled()) return // turned off from inside the app
 
       const notified = getNotifiedIds()
       let changed = false
@@ -91,13 +91,13 @@ export function useEventReminders(events) {
         if (days < 0 || days > REMINDER_WINDOW_DAYS) continue
         if (notified.has(event.id)) continue
 
-        new Notification(event.title, {
+        try { new Notification(event.title, {
           body:
             days === 0
               ? `Happening today${event.time ? ` at ${event.time}` : ''}${event.location ? ` · ${event.location}` : ''}`
               : `Happening tomorrow${event.location ? ` · ${event.location}` : ''}`,
           tag: event.id, // avoids duplicate OS-level notifications for the same event
-        })
+        }) } catch { continue }
         notified.add(event.id)
         changed = true
       }

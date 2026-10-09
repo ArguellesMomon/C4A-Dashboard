@@ -7,32 +7,32 @@ export default {
         // Core theme: deep green, cream, white, with a small gold accent
         // for highlights (countdown ribbons, active states).
         forest: {
-          950: '#0F2318',
-          900: '#16321F',
-          800: '#1F3D2B', // primary brand green (navbar, headings)
-          700: '#28502F',
-          600: '#336639',
-          500: '#3F7A45', // primary buttons / links
-          400: '#5C9962',
+          950: 'rgb(var(--forest-950) / <alpha-value>)',
+          900: 'rgb(var(--forest-900) / <alpha-value>)',
+          800: 'rgb(var(--forest-800) / <alpha-value>)', // primary brand green (navbar, headings)
+          700: 'rgb(var(--forest-700) / <alpha-value>)',
+          600: 'rgb(var(--forest-600) / <alpha-value>)',
+          500: 'rgb(var(--forest-500) / <alpha-value>)', // primary buttons / links
+          400: 'rgb(var(--forest-400) / <alpha-value>)',
         },
         sage: {
-          100: '#E7EEE4',
-          200: '#D2E0CC',
-          300: '#B7CFAF', // soft badges / hover states
+          100: 'rgb(var(--sage-100) / <alpha-value>)',
+          200: 'rgb(var(--sage-200) / <alpha-value>)',
+          300: 'rgb(var(--sage-300) / <alpha-value>)', // soft badges / hover states
         },
         cream: {
-          DEFAULT: '#FAF6EC',
-          100: '#FFFEFB',
-          200: '#F5EFDE', // page background
-          300: '#ECE3CA', // card borders / dividers
+          DEFAULT: 'rgb(var(--cream-100) / <alpha-value>)',
+          100: 'rgb(var(--cream-100) / <alpha-value>)',
+          200: 'rgb(var(--cream-200) / <alpha-value>)', // page background
+          300: 'rgb(var(--cream-300) / <alpha-value>)', // card borders / dividers
         },
         gold: {
-          DEFAULT: '#C9A227', // sparing accent: countdown ribbon, active tab
-          light: '#E4C766',
+          DEFAULT: 'rgb(var(--gold) / <alpha-value>)', // sparing accent: countdown ribbon, active tab
+          light: 'rgb(var(--gold-light) / <alpha-value>)',
         },
       },
       fontFamily: {
-        display: ['"Fraunces"', 'ui-serif', 'Georgia', 'serif'],
+        display: ['"Manrope"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         body: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       boxShadow: {

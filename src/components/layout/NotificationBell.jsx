@@ -24,6 +24,7 @@ export default function NotificationBell() {
 
     return (
       <button
+        aria-label={permission === 'denied' ? 'Notifications blocked' : 'Enable event reminders'}
         onClick={handleRequest}
         disabled={permission === 'denied'}
         className="flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-semibold
@@ -44,6 +45,8 @@ export default function NotificationBell() {
 
   return (
     <button
+      aria-label={enabled ? 'Turn off event reminders' : 'Turn on event reminders'}
+      aria-pressed={enabled}
       onClick={toggleEnabled}
       className="flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-semibold
         hover:bg-forest-700 sm:gap-2 sm:px-3"

@@ -2,9 +2,10 @@ import React, { useMemo, useState } from 'react'
 import CalendarDayCell from './CalendarDayCell.jsx'
 import { buildMonthGrid, monthName, WEEKDAYS } from '../../lib/dateUtils.js'
 
-export default function CalendarView({ events, selectedDate, onSelectDate }) {
+export default function CalendarView({ events, selectedDate, onSelectDate, initialDate }) {
   const [cursor, setCursor] = useState(() => {
-    const now = new Date()
+    const anchor = initialDate || selectedDate
+    const now = anchor ? new Date(anchor + 'T00:00:00') : new Date()
     return { year: now.getFullYear(), month: now.getMonth() }
   })
 
@@ -34,27 +35,27 @@ export default function CalendarView({ events, selectedDate, onSelectDate }) {
   }
 
   return (
-    <div className="rounded-2xl border border-cream-300 bg-cream-100 p-4 shadow-card sm:p-5">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-display text-lg font-semibold text-forest-900">
+    <div className="month-calendar">
+      <div className="month-calendar-heading">
+        <h2 className="month-calendar-title">
           {monthName(cursor.month)} {cursor.year}
         </h2>
-        <div className="flex items-center gap-1">
-          <button onClick={() => shiftMonth(-1)} aria-label="Previous month" className="rounded-lg p-2 hover:bg-sage-100">‹</button>
-          <button onClick={goToToday} className="rounded-lg px-2 py-1 text-xs font-semibold text-forest-700 hover:bg-sage-100">
+        <div className="calendar-nav">
+          <button onClick={() => shiftMonth(-1)} aria-label="Previous month" className="calendar-month-arrow">‹</button>
+          <button onClick={goToToday} className="calendar-today">
             Today
           </button>
-          <button onClick={() => shiftMonth(1)} aria-label="Next month" className="rounded-lg p-2 hover:bg-sage-100">›</button>
+          <button onClick={() => shiftMonth(1)} aria-label="Next month" className="calendar-month-arrow">›</button>
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-forest-700/60">
+      <div className="calendar-weekdays">
         {WEEKDAYS.map((w) => (
           <div key={w} className="py-1">{w}</div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-1">
+      <div className="calendar-grid">
         {grid.map((cell) => (
           <CalendarDayCell
             key={cell.iso}

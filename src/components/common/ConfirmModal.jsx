@@ -8,15 +8,18 @@ export default function ConfirmModal({
   confirmLabel = 'Confirm',
   cancelLabel = 'Cancel',
   danger = false,
+  busy = false,
+  error = '',
   onConfirm,
   onCancel,
 }) {
   return (
     <Modal title={title} onClose={onCancel} maxWidth="max-w-sm">
-      <p className="text-sm leading-relaxed text-forest-700/80">{message}</p>
+      <p className="confirmation-message">{message}</p>
+      {error && <p role="alert" className="login-error mt-3">{error}</p>}
       <div className="mt-6 flex justify-end gap-2">
-        <Button variant="ghost" onClick={onCancel}>{cancelLabel}</Button>
-        <Button variant={danger ? 'danger' : 'primary'} onClick={onConfirm}>{confirmLabel}</Button>
+        <Button variant="ghost" disabled={busy} onClick={onCancel}>{cancelLabel}</Button>
+        <Button variant={danger ? 'danger' : 'primary'} disabled={busy} onClick={onConfirm}>{busy ? 'Deleting…' : confirmLabel}</Button>
       </div>
     </Modal>
   )
